@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+patches:
+- patch.yaml
+
+configMapGenerator:
+- name: mysql-config
+  behavior: merge
+  literals:
+  - database-name=appdb_dev
+  - charset=utf8mb4
+
+secretGenerator:
+- name: mysql-secret
+  behavior: merge
+  literals:
+  - root-password=devrootpass123
+  - username=devuser
+  - password=devpass123
+
+images:
+- name: mysql
+  newTag: "8.0-debian"

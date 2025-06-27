@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+patches:
+- patch.yaml
+
+replicas:
+- name: api-server
+  count: 3
+
+configMapGenerator:
+- name: app-config
+  behavior: merge
+  literals:
+  - app-env=production
+  - debug=false
+
+secretGenerator:
+- name: db-secret
+  behavior: merge
+  literals:
+  - password=prodpassword456
+
+images:
+- name: nginx
+  newTag: "1.21"

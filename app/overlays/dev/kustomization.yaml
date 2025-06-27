@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+patches:
+- patch.yaml
+
+replicas:
+- name: api-server
+  count: 1
+
+configMapGenerator:
+- name: app-config
+  behavior: merge
+  literals:
+  - app-env=development
+  - debug=true
+
+secretGenerator:
+- name: db-secret
+  behavior: merge
+  literals:
+  - password=devpassword123
+
+images:
+- name: nginx
+  newTag: "1.21-alpine"

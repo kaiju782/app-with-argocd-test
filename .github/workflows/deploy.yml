@@ -1,0 +1,43 @@
+name: Deploy with Kustomize
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Kustomize
+      uses: imranismail/setup-kustomize@v1
+      
+    - name: Validate Kustomize files
+      run: |
+        kustomize build environments/dev
+        kustomize build environments/prod
+        
+    - name: Deploy to dev (on develop branch)
+      if: github.ref == 'refs/heads/develop'
+      run: |
+        echo "Deploying to development environment"
+        kustomize build environments/dev > dev-manifest.yaml
+        
+    - name: Deploy to prod (on main branch)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "Deploying to production environment"
+        kustomize build environments/prod > prod-manifest.yaml
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: k8s-manifests
+        path: |
+          dev-manifest.yaml
+          prod-manifest.yaml
