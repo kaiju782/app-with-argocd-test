@@ -8,7 +8,7 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: standard
+  storageClassName: local-path
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -26,4 +26,4 @@ type: Opaque
 data:
   root-password: cm9vdHBhc3N3b3JkMTIz  # rootpassword123 base64 encoded
   username: YXBwdXNlcg==  # appuser base64 encoded
-  password: cGFzc3dvcmQxMjM=  # password123 base64 encoded
+  password: cGFzc3dvcmQxMjM=  # password123 base64 encodeddb/base/kustomization.yaml

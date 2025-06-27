@@ -6,7 +6,7 @@ spec:
   resources:
     requests:
       storage: 50Gi
-  storageClassName: fast-ssd
+  storageClassName: local-path
 ---
 apiVersion: apps/v1
 kind: Deployment
