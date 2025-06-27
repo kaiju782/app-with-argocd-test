@@ -9,33 +9,39 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
+    # 1. 소스 체크아웃 (v4 권장)
     - name: Checkout code
-      uses: actions/checkout@v3
-      
+      uses: actions/checkout@v4
+
+    # 2. Kustomize 설치
     - name: Setup Kustomize
-      uses: imranismail/setup-kustomize@v1
-      
+      uses: imranismail/setup-kustomize@v1     
+
+    # 3. 매니페스트 검증
     - name: Validate Kustomize files
       run: |
         kustomize build environments/dev
         kustomize build environments/prod
-        
+
+    # 4. develop 브랜치 → dev 환경 매니페스트 생성
     - name: Deploy to dev (on develop branch)
       if: github.ref == 'refs/heads/develop'
       run: |
         echo "Deploying to development environment"
         kustomize build environments/dev > dev-manifest.yaml
-        
+
+    # 5. main 브랜치 → prod 환경 매니페스트 생성
     - name: Deploy to prod (on main branch)
       if: github.ref == 'refs/heads/main'
       run: |
         echo "Deploying to production environment"
         kustomize build environments/prod > prod-manifest.yaml
-        
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+
+    # 6. 산출물 업로드 (v4 필수)
+    - name: Upload manifests as artifacts
+      uses: actions/upload-artifact@v4
       with:
         name: k8s-manifests
         path: |
